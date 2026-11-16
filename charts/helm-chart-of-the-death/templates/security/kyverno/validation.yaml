@@ -16,7 +16,7 @@
     {{- $errors := list }}
 
     {{- range $obsoleteapi := $obsoleteapis }}
-      {{- if .Capabilities.APIVersions.Has (printf "%s/%s" $obsoleteapi.api $obsoleteapi.name) }}
+      {{- if $.Capabilities.APIVersions.Has (printf "%s/%s" $obsoleteapi.api $obsoleteapi.name) }}
         {{- if gt (len (lookup $obsoleteapi.api $obsoleteapi.name "" "").items) 0 }}
           {{ $errors = append $errors (printf "some %s %s still exists in the cluster. Migrate them before the kyverno upgrade" $obsoleteapi.api $obsoleteapi.name) }}
         {{- end }}
