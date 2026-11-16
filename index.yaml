@@ -14,6 +14,18 @@ entries:
     version: 0.0.1
   helm-chart-of-the-death:
   - apiVersion: v2
+    created: "2026-11-16T10:33:19.109920599Z"
+    description: One chart to rule them all !
+    digest: b7396974837a8120fe8c2c7c063f33f36c224f7a62fa17fe061785a5a695bc42
+    icon: https://raw.githubusercontent.com/jfcoz/helm-chart-of-the-death/refs/heads/main/docs/media/helm-chart-of-the-death_64.png
+    maintainers:
+    - email: julien-helmchartofthedeath@francoz.net
+      name: jfcoz
+    name: helm-chart-of-the-death
+    urls:
+    - https://github.com/jfcoz/helm-chart-of-the-death/releases/download/helm-chart-of-the-death-2.126.0/helm-chart-of-the-death-2.126.0.tgz
+    version: 2.126.0
+  - apiVersion: v2
     created: "2026-11-16T10:27:05.526146046Z"
     description: One chart to rule them all !
     digest: 086ea1d43745ad1a5e54e8b764b892503c741b58ebc426d62ef948d44717c7db
@@ -5496,4 +5508,4 @@ entries:
     urls:
     - https://github.com/jfcoz/helm-chart-of-the-death/releases/download/helm-chart-of-the-death-0.2.6/helm-chart-of-the-death-0.2.6.tgz
     version: 0.2.6
-generated: "2026-11-16T10:27:05.52698043Z"
+generated: "2026-11-16T10:33:19.111582968Z"
