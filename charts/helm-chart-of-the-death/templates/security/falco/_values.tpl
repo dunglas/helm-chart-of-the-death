@@ -29,7 +29,8 @@ customRules:
         or (
           k8s.ns.name = "{{ .Values.components.backup.velero.namespace}}"
           and container.image.repository in (
-            docker.io/velero/velero
+            docker.io/velero/velero,
+            mirror.gcr.io/velero/velero
           )
         )
     {{- end }}
@@ -93,7 +94,9 @@ customRules:
           k8s.ns.name = "{{ .Values.components.monitoring.k8sMonitoring.namespace}}"
           and container.image.repository in (
             docker.io/grafana/alloy,
+            mirror.gcr.io/grafana/alloy,
             docker.io/grafana/alloy-operator,
+            mirror.gcr.io/grafana/alloy-operator,
             ghcr.io/grafana/alloy-operator,
             ghcr.io/grafana/helm-chart-toolbox-kubectl
           )
@@ -109,7 +112,9 @@ customRules:
           and container.image.repository in (
             quay.io/kiwigrid/k8s-sidecar,
             docker.io/kiwigrid/k8s-sidecar,
+            mirror.gcr.io/kiwigrid/k8s-sidecar,
             quay.io/prometheus/prometheus,
+            quay.io/prometheus-operator/prometheus-operator,
             registry.k8s.io/kube-state-metrics/kube-state-metrics,
             ghcr.io/jkroepke/kube-webhook-certgen
           )
@@ -124,7 +129,8 @@ customRules:
           k8s.ns.name = "{{ .Values.components.monitoring.loki.namespace}}"
           and container.image.repository in (
             quay.io/kiwigrid/k8s-sidecar,
-            docker.io/kiwigrid/k8s-sidecar
+            docker.io/kiwigrid/k8s-sidecar,
+            mirror.gcr.io/kiwigrid/k8s-sidecar
           )
         )
     {{- end }}
@@ -149,7 +155,8 @@ customRules:
           k8s.ns.name = "{{ .Values.components.monitoring.promtail.namespace}}"
           and container.image.repository in (
             grafana/promtail,
-            docker.io/grafana/promtail
+            docker.io/grafana/promtail,
+            mirror.gcr.io/grafana/promtail
           )
         )
     {{- end }}
@@ -162,7 +169,8 @@ customRules:
           k8s.ns.name = "{{ .Values.components.monitoring.x509CertificateExporter.namespace}}"
           and container.image.repository in (
             enix/x509-certificate-exporter,
-            docker.io/enix/x509-certificate-exporter
+            docker.io/enix/x509-certificate-exporter,
+            mirror.gcr.io/enix/x509-certificate-exporter
           )
         )
     {{- end }}
@@ -235,6 +243,7 @@ customRules:
         or (
           k8s.ns.name = "{{ .Values.components.security.certManager.namespace}}"
           and container.image.repository in (
+            quay.io/jetstack/cert-manager-cainjector,
             quay.io/jetstack/cert-manager-controller,
             quay.io/jetstack/cert-manager-webhook
           )
@@ -249,7 +258,8 @@ customRules:
           k8s.ns.name = "{{ .Values.components.security.falco.namespace}}"
           and container.image.repository in (
             falcosecurity/k8s-metacollector,
-            docker.io/falcosecurity/k8s-metacollector
+            docker.io/falcosecurity/k8s-metacollector,
+            mirror.gcr.io/falcosecurity/k8s-metacollector
           )
         )
     {{- if include "common.used" .Values.components.security.kyverno }}
@@ -264,6 +274,18 @@ customRules:
             reg.kyverno.io/kyverno/cleanup-controller,
             reg.kyverno.io/kyverno/reports-controller,
             reg.kyverno.io/kyverno/background-controller 
+          )
+        )
+    {{- end }}
+    {{- if include "common.used" .Values.components.security.trivy }}
+    - macro: k8s_containers
+      override:
+        condition: append
+      condition: |
+        or (
+          k8s.ns.name = "{{ .Values.components.security.trivy.namespace}}"
+          and container.image.repository in (
+            mirror.gcr.io/aquasec/trivy-operator
           )
         )
     {{- end }}

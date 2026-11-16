@@ -33,6 +33,19 @@ object_store:
     # access_key_id/secret_access_key not needed, we use the serviceAccount role
     region: {{ $me.config.aws.region | required "missing monitoring.loki.config.aws.region" }}
 
+{{- else if eq .Values.cloudProvider "gcp" }}
+type: gcs
+use_thanos_objstore: true
+bucketNames:
+  chunks: {{ (((((.Values.components).monitoring).loki).config).buckets).chunks | required "missing loki.monitoring.config.buckets.chunks" }}
+  # https://github.com/grafana/loki/pull/19882
+  ruler: unused
+object_store:
+  type: gcs
+  #gcs:
+    # access_key_id/secret_access_key not needed, we use the serviceAccount role
+    #region: {{ $me.config.gcp.region | required "missing monitoring.loki.config.gcp.region" }}
+
 {{- else if eq .Values.cloudProvider "scw" }}
 type: s3
 use_thanos_objstore: true
@@ -68,4 +81,24 @@ bucketNames:
 
 
 
+{{- end }}
+
+
+
+
+{{- define "monitoring.loki.loki.objectstore" -}}
+{{- $me := .Values.components.monitoring.loki -}}
+{{- if .Capabilities.APIVersions.Has "objectbucket.io/v1alpha1" -}}
+s3
+{{- else if eq .Values.cloudProvider "aws" -}}
+s3
+{{- else if eq .Values.cloudProvider "gcp" -}}
+gcs
+{{- else if eq .Values.cloudProvider "scw" -}}
+s3
+{{- else if ($me.values.minio).enabled -}}
+s3
+{{- else -}}
+{{ fail "monitoning.loki.loki.objectore not implemented yet for this cloudProvider" }}
+{{- end -}}
 {{- end }}

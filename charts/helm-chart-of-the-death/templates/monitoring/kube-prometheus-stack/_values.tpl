@@ -1315,29 +1315,32 @@ additionalPrometheusRulesMap:
       - name: Upgrades
         rules:
           - alert: ApiserverRequestedDeprecatedApis
+            # uniquement les API dont la suppression est planifiee (removed_release renseigne) :
+            # certaines API depreciees sans suppression prevue sont appelees par le control plane
+            # lui-meme (ex. Endpoints v1 par l'endpoint-controller depuis k8s 1.33) et ne sont pas corrigeables.
             expr: |-
-              apiserver_requested_deprecated_apis > 0
+              apiserver_requested_deprecated_apis{removed_release!=""} > 0
             for: 1m
             labels:
               severity: warning
             annotations:
               summary: 'ApiserverRequestedDeprecatedApis'
-              description: 'Apiserver receive requests for deprecated Apis. This must be corrected before next upgrade'
+              description: 'Apiserver receive requests for deprecated API {{ "{{" }} $labels.group }}/{{ "{{" }} $labels.version }} {{ "{{" }} $labels.resource }}, removed in {{ "{{" }} $labels.removed_release }}. This must be corrected before upgrading to this release'
       - name: Applications
         rules:
           - alert: ContainerRestartsTooMuch
             expr: |-
               sum by(namespace,pod,container) (stdvar_over_time(kube_pod_container_status_restarts_total[1h])) > 1
-            for: 1m
+            for: 15m
             labels:
               severity: warning
             annotations:
               summary: 'ContainerRestartsTooMuch'
-              description: 'The container {{ "{{" }} $labels.container }} of pod {{ "{{" }} $labels.pod }} in namespace {{ "{{" }} $labels.namespace }} has restarted more than one time in tha last hour, please analyse the cause'
+              description: 'The container {{ "{{" }} $labels.container }} of pod {{ "{{" }} $labels.pod }} in namespace {{ "{{" }} $labels.namespace }} has restarted more than one time in the last hour, please analyse the cause'
           - alert: ContainerProbeIsFlapping
             expr: |-
               sum by(namespace, pod, container, probe_type) (stddev_over_time(prober_probe_total{result="failed",probe_type!="Startup"}[10m])) > 2
-            for: 1m
+            for: 15m
             labels:
               severity: warning
             annotations:
